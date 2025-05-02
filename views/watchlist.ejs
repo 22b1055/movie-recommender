@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Watchlist - Movie Recommender</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      color: #007bff;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+      background-color: #e6f0ff;
+    }
+
+    nav a.active {
+      font-weight: bold;
+      background-color: #007bff;
+      color: white;
+    }
+
+    main h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .btn-small {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .danger {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .danger:hover {
+      background-color: #c0392b;
+    }
+
+    .inline-form {
+      display: inline;
+    }
+
+    .error-message, .success-message {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .error-message {
+      background-color: #ffe6e6;
+      color: #cc0000;
+      border: 1px solid #ffcccc;
+    }
+
+    .success-message {
+      background-color: #e6ffe6;
+      color: #2d662d;
+      border: 1px solid #b3ffb3;
+    }
+
+    p {
+      font-size: 1.1rem;
+    }
+
+    a {
+      color: #007bff;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Movie Recommender</h1>
+      <nav>
+        <a href="/watchlist" class="active">My Watchlist</a>
+        <a href="/recommended">Recommended</a>
+        <a href="/add">Add Movie</a>
+        <a href="/chat">MovieBot</a>
+        <a href="/api/logout">Logout</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>My Watchlist</h2>
+
+      <% if (error) { %>
+        <div class="error-message"><%= error %></div>
+      <% } %>
+
+      <% if (success) { %>
+        <div class="success-message"><%= success %></div>
+      <% } %>
+
+      <% if (movies.length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Watch Date</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% movies.forEach(movie => { %>
+              <tr>
+                <td><%= movie.title %></td>
+                <td><%= new Date(movie.watch_date).toLocaleDateString() %></td>
+                <td><%= movie.notes || '-' %></td>
+                <td>
+                  <form action="/api/watchlist/<%= movie.watch_id %>" method="POST" class="inline-form">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-small danger">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>Your watchlist is empty. <a href="/add">Add some movies!</a></p>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

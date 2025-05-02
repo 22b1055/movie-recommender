@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Movie - Movie Recommender</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+    header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    nav {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    nav a {
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        color: #007bff;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+        background-color: #e6f0ff;
+      }
+
+    nav a.active {
+      font-weight: bold;
+      background-color: #007bff;
+      color: white;
+    }
+
+    a {
+      color: #007bff;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        color: #333;
+        text-align: center;
+      }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      background-color: #007BFF;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .error-message {
+      background-color: #f8d7da;
+      color: #842029;
+      padding: 0.75rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+    }
+
+    .success-message {
+      background-color: #d1e7dd;
+      color: #0f5132;
+      padding: 0.75rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+    }
+
+    .filter-form {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      margin-top: 2rem;
+    }
+
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .movie-card {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .movie-card h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    .movie-card p {
+      margin: 0.25rem 0;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Movie Recommender</h1>
+      <nav>
+        <a href="/watchlist">My Watchlist</a>
+        <a href="/recommended">Recommended</a>
+        <a href="/add" class="active">Add Movie</a>
+        <a href="/chat">MovieBot</a>
+        <a href="/api/logout">Logout</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Add a Movie to Your Watchlist</h2>
+
+      <% if (error) { %>
+        <div class="error-message"><%= error %></div>
+      <% } %>
+
+      <% if (success) { %>
+        <div class="success-message"><%= success %></div>
+      <% } %>
+
+      <!-- Add Movie Form -->
+      <form action="/add" method="POST">
+        <div class="form-group">
+          <label for="movie_name">Movie Title:</label>
+          <input type="text" id="movie_name" name="movie_name" value="<%= title %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="watch_date">Watch Date:</label>
+          <input type="date" id="watch_date" name="watch_date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes:</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Optional notes..."></textarea>
+        </div>
+
+        <button type="submit" class="btn">Add to Watchlist</button>
+      </form>
+
+      <!-- Filter/Search Form -->
+      <form method="GET" action="/add" class="filter-form">
+        <h2>Search Movies by Genre and Rating</h2>
+
+        <div class="form-group">
+          <label for="genre">Genre contains:</label>
+          <input type="text" name="genre" id="genre" value="<%= genre || '' %>">
+        </div>
+
+        <div class="form-group">
+          <label for="min_rating">Minimum Rating:</label>
+          <input type="number" step="0.1" name="min_rating" id="min_rating" value="<%= min_rating || '' %>">
+        </div>
+
+        <button type="submit" class="btn">Search</button>
+      </form>
+
+      <!-- Search Results -->
+      <% if (movies && movies.length > 0) { %>
+        <div class="movie-grid">
+          <% movies.forEach(movie => { %>
+            <div class="movie-card">
+              <h3><%= movie.title %></h3>
+              <p><strong>Genre:</strong> <%= movie.genre %></p>
+              <p><strong>Rating:</strong> <%= movie.vote_average %></p>
+              <a href="/add?title=<%= encodeURIComponent(movie.title) %>" class="btn">Select</a>
+            </div>
+          <% }); %>
+        </div>
+      <% } else if (genre || min_rating) { %>
+        <p style="margin-top: 2rem;">No movies found with the given filters.</p>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

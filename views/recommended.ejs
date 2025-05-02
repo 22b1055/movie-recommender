@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recommended - Movie Recommender</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      color: #007bff;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+      background-color: #e6f0ff;
+    }
+
+    nav a.active {
+      font-weight: bold;
+      background-color: #007bff;
+      color: white;
+    }
+
+    a {
+      color: #007bff;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #333;
+      text-align: center;
+    }
+
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .movie-card {
+      background-color: #ffffff;
+      padding: 1.2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .movie-card h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .movie-card p {
+      margin: 0.4rem 0;
+    }
+
+    .btn-small {
+      display: inline-block;
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.8rem;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-small:hover {
+      background-color: #218838;
+    }
+
+    .error-message {
+      background-color: #ffe6e6;
+      color: #cc0000;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    p {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Movie Recommender</h1>
+      <nav>
+        <a href="/watchlist">My Watchlist</a>
+        <a href="/recommended" class="active">Recommended</a>
+        <a href="/add">Add Movie</a>
+        <a href="/chat">MovieBot</a>
+        <a href="/api/logout">Logout</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Recommended For You</h2>
+
+      <% if (error) { %>
+        <div class="error-message"><%= error %></div>
+      <% } %>
+
+      <div class="movie-grid">
+        <% if (movies.length > 0) { %>
+          <% movies.forEach(movie => { %>
+            <div class="movie-card">
+              <h3><%= movie.title %></h3>
+              <p><strong>Genre:</strong> <%= movie.genre %></p>
+              <p><strong>Rating:</strong> <%= movie.rating %>/10</p>
+              <p><%= movie.description %></p>
+              <a href="/add?title=<%= encodeURIComponent(movie.title) %>" class="btn-small success">
+                Add to Watchlist
+              </a>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p>No recommendations available. Add more movies to your watchlist!</p>
+        <% } %>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

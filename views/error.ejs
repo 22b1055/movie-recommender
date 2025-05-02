@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Movie Recommender</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: #444;
+        }
+
+        nav {
+            margin-top: 1rem;
+        }
+
+        nav a {
+            margin: 0 1rem;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        nav a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        main.error-container {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-header {
+            color: #e74c3c;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-details {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-left: 5px solid #e74c3c;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 2rem;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .error-header {
+                font-size: 1.5rem;
+            }
+
+            .error-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Movie Recommender</h1>
+            <nav>
+                <% if (user) { %>
+                    <a href="/watchlist">My Watchlist</a>
+                    <a href="/recommended">Recommended</a>
+                    <a href="/api/logout">Logout</a>
+                <% } else { %>
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                <% } %>
+            </nav>
+        </header>
+        
+        <main class="error-container">
+            <h2 class="error-header">Oops! Something went wrong</h2>
+            
+            <p>We encountered an error while processing your request. Please try again later.</p>
+            
+            <% if (error) { %>
+                <div class="error-details">
+                    <strong>Error:</strong> <%= error.message %>
+                    <% if (error.stack && env === 'development') { %>
+                        <br><br>
+                        <strong>Stack trace:</strong><br>
+                        <%= error.stack %>
+                    <% } %>
+                </div>
+            <% } %>
+
+            <div class="error-actions">
+                <a href="/" class="btn">Return to Home</a>
+                <% if (user) { %>
+                    <a href="/watchlist" class="btn">Go to Watchlist</a>
+                <% } else { %>
+                    <a href="/login" class="btn">Try Login Again</a>
+                <% } %>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

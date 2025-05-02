@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Movie Chatbot</title>
+  <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+    }
+
+    nav {
+      
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      
+    }
+
+    nav a {
+        color: #007bff;
+      text-decoration: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+        background-color: #e6f0ff;
+      }
+  
+    nav a.active {
+        font-weight: bold;
+        background-color: #007bff;
+        color: white;
+    }
+
+    a {
+      color: #007bff;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+        max-width: 1500px;
+        margin: auto;
+        padding: 2rem;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        color: #333;
+        text-align: center;
+      }
+
+      #messages {
+        height: 450px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 15px;
+        background: #f9f9f9;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .message {
+        max-width: 75%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        position: relative;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        word-wrap: break-word;
+      }
+      
+      .user {
+        padding: 10px 10px;
+        align-self: flex-end;
+        background: rgb(208, 204, 238);
+        color: black;
+        border-width: 100px;
+        border-color: blue;
+      }
+      
+      
+      .assistant {
+        padding: 10px 10px;
+        align-self: flex-start;
+        background: rgb(211, 252, 225);
+        color: black;
+        border-width: 100px;
+        border-color: green;
+      }
+      
+      
+      
+      
+      
+
+    /* Optional: Styling for message input box and buttons */
+    input[type="text"] {
+        width: 75%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px 15px;
+        margin-top: 10px;
+        background: #333;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+</style>
+
+
+</head>
+<body>
+
+  <div class="container">
+    <header>
+    <h1>Movie Recommender</h1>
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="/watchlist">My Watchlist</a>
+        <a href="/recommended">Recommended</a>
+        <a href="/add">Add Movie</a>
+        <a href="/chat" class="active">MovieBot</a>
+        <a href="/api/logout">Logout</a>
+    </nav>
+    <h2>MovieBot</h2>
+    </header>
+
+    <div id="messages"></div>
+
+    <input type="text" id="userMessage" placeholder="Type your message..." />
+    <div class="button-group">
+      <button onclick="sendMessage()">Send</button>
+      <button onclick="startNewChat()">Start New Chat</button>
+    </div>
+  </div>
+
+  <!-- <script>
+    const userId = 'user1'; // Replace with dynamic user ID if needed
+
+    function appendMessage(role, content) {
+      const messages = document.getElementById('messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add(role);
+      messageDiv.textContent = content;
+      messages.appendChild(messageDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('userMessage');
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage('user', message);
+      input.value = '';
+
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, message })
+      });
+
+      const data = await res.json();
+      appendMessage('assistant', data.response);
+    }
+
+    async function startNewChat() {
+      await fetch('/chat/new', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+
+      document.getElementById('messages').innerHTML = '';
+    }
+  </script> -->
+  <script>
+    const userId = "<%= userId %>";
+    const initialHistory = <%- JSON.stringify(history) %>;
+  
+    function appendMessage(role, content) {
+      const messages = document.getElementById('messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add(role, 'message');
+      messageDiv.textContent = content;
+      messages.appendChild(messageDiv);
+      messages.scrollTop = messages.scrollHeight;
+    }
+  
+    // Load existing messages on page load
+    window.onload = () => {
+      for (const msg of initialHistory) {
+        appendMessage(msg.role, msg.content);
+      }
+    };
+  
+    async function sendMessage() {
+      const input = document.getElementById('userMessage');
+      const message = input.value.trim();
+      if (!message) return;
+  
+      appendMessage('user', message);
+      input.value = '';
+  
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, message })
+      });
+  
+      const data = await res.json();
+      appendMessage('assistant', data.response);
+    }
+  
+    async function startNewChat() {
+      await fetch('/chat/new', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+  
+      document.getElementById('messages').innerHTML = '';
+    }
+  </script>
+  
+</body>
+</html>
